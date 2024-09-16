@@ -5,8 +5,6 @@ class TimeOutput
   AVAILABLE_FORMATS = { 'year' => '%Y', 'month' => '%m', 'day' => '%d', 'hour' => '%H', 'minute' => '%m', 'second' => '%S' }.freeze
 
   def initialize(request)
-    @parts = []
-    @path = request.path
     @formats = request.params['format']
   end
 
@@ -15,20 +13,20 @@ class TimeOutput
     Time.now.strftime(date_time.join('-'))
   end
 
-  def invalid_path?
-    @path != '/time'
-  end
-
   def empty_formats?
     @formats.nil?
   end
 
-  def unknown_time_formats
-    @formats.split(',') - AVAILABLE_FORMATS.keys
+  def formats_valid?
+    sampling_unknown_time_formats.empty?
   end
 
-  def formats_valid?
-    unknown_time_formats.empty?
+  def sampling_unknown_time_formats
+    @unknown_formats = @formats.split(',') - AVAILABLE_FORMATS.keys
+  end
+
+  def unknown_time_formats
+    @unknown_formats
   end
 
 end
